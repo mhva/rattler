@@ -28,7 +28,8 @@ type TwitterHTTP struct {
 func NewTwitterHTTP() *TwitterHTTP {
 	return &TwitterHTTP{
 		httpClient: &http.Client{
-			Timeout: 30 * time.Second,
+			Timeout:       30 * time.Second,
+			CheckRedirect: handleRedirect,
 		},
 	}
 }
@@ -106,6 +107,19 @@ func configureRequest(request *http.Request) {
 	request.Header.Set("Accept-Language", "en-US,en;q=0.9")
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) "+
 		"Gecko/20100101 Firefox/67.0")
+}
+
+func handleRedirect(req *http.Request, via []*http.Request) error {
+	const maxRedirects = 5
+
+	if len(via) > maxRedirects {
+		return &URLError{
+			msg:   fmt.Sprintf("Exceeded max number of redirects (%d)", maxRedirects),
+			url:   via[0].URL.String(),
+			cause: nil,
+		}
+	}
+	return nil
 }
 
 func extractFileExtFromURL(rawURL string) string {
