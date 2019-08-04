@@ -120,8 +120,9 @@ func (t *GenericFeedCursor) RetrievePage() (FeedPageReader, error) {
 		referrer = fmt.Sprintf("https://twitter.com/%s", t.username)
 	}
 
-	request.Header.Add("Referer", referrer)
-	request.Header.Add("Accept", "application/json,text/javascript,*/*;q=0.01")
+	request.Header.Set("Referer", referrer)
+	request.Header.Set("Accept", "application/json,text/javascript,*/*;q=0.01")
+	request.Header.Set("X-Requested-With", "XMLHttpRequest")
 
 	structuredJSON, err := t.client.jsonRequest(request)
 	if err != nil {
