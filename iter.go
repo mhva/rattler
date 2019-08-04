@@ -12,13 +12,13 @@ type FeedIterResult struct {
 // FeedIter returns a channel which can be used to read all available
 // feed tweets.
 //
-// Using FeedIter() is the recommended way for scraping tweets in this package.
+// Using FeedIter() is the recommended way for scraping tweet data.
 //
 // Depending on cursor used, not all available tweets may be retrieved by the
 // iterator. Twitter puts a hard limit on a maximum number tweets in a feed.
-// So far, the one and the only known way to retrieve every possible tweet from
-// the feed is done by searching feed with a time range that extends past the
-// last tweet's date in a regular (limited) feed.
+// So far, the only known way to completely retrieve the entire twitter feed
+// is to iterate over the feed using a search query with a sliding time range
+// until no tweets are getting returned.
 func (t *TwitterSession) FeedIter(singlePage ...bool) <-chan (FeedIterResult) {
 	type pageIter struct {
 		page FeedPageReader
@@ -31,7 +31,7 @@ func (t *TwitterSession) FeedIter(singlePage ...bool) <-chan (FeedIterResult) {
 	// Stop download after 1 page if requested by the caller.
 	onlyOnePage := len(singlePage) == 1 && singlePage[0]
 
-	// Start goroutine to handle downloading Twitter feed in the background.
+	// Start goroutine for downloading Twitter feed in the background.
 	go func() {
 		// Helper function that writes out the page to consumer or bails out
 		// if it detects that the consumer side has been shut down.
