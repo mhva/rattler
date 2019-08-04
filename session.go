@@ -103,7 +103,7 @@ func (t *TwitterHTTP) jsonRequest(request *http.Request) (interface{}, error) {
 
 func configureRequest(request *http.Request) {
 	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml,*/*;q=0.8")
-	request.Header.Add("Accept-Language", "en_US,en")
+	request.Header.Set("Accept-Language", "en-US,en;q=0.9")
 	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) "+
 		"Gecko/20100101 Firefox/45.3")
 }
